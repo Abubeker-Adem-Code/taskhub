@@ -40,7 +40,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const token = localStorage.getItem('token');
   if (token) {
     showScreen('dashboard-view');
-  } else {
+  if (typeof loadDashboardContent === 'function') loadDashboardContent();
+  }
+  else {
     showScreen('landing-view');
   }
 });
