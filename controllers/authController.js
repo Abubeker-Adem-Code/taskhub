@@ -48,7 +48,7 @@ const login = async (req, res) => {
             process.env.JWT_SECRET,
             { expiresIn: '2h' }
         );
-
+        if (global.logAction) global.logAction('LOGIN_ATTEMPT', { email: req.body.email, status: 'SUCCESS' });
         res.status(200).json({
             message: 'Login successful',
             token: token,

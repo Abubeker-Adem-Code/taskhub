@@ -1,7 +1,8 @@
+const morgan = require('morgan');
 require('dotenv').config();
 const express = require('express');
 const app = express();
-
+app.use(morgan('dev'));
 app.use(express.json());
 const authRoutes = require('./routes/authRoutes');
 app.use('/api/auth', authRoutes);
@@ -15,4 +16,10 @@ const taskRoutes = require('./routes/taskRoutes');
 app.use('/api/tasks', taskRoutes);
 const applicationRoutes = require('./routes/applicationRoutes');
 app.use('/api', applicationRoutes);
+const fs = require('fs');
+const path = require('path');
 
+global.logAction = (action, details) => {
+  const msg = `[${new Date().toISOString()}] ACTION: ${action} | DETAILS: ${JSON.stringify(details)}\n`;
+  fs.appendFileSync(path.join(__dirname, 'app.log'), msg);
+};

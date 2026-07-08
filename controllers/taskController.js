@@ -65,6 +65,9 @@ exports.completeTask = (req, res) => {
   try {
     const stmt = directDb.prepare(`UPDATE tasks SET status = 'completed' WHERE id = ?`);
     stmt.run(taskId);
+    
+    if (global.logAction) global.logAction('TASK_STATUS_CHANGE', { id: taskId, status: 'completed' });
+
     res.json({ message: "Task marked as completed" });
   } catch (err) {
     res.status(500).json({ error: err.message });
