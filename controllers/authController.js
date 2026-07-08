@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const db = requiree('../config/database');
+const db = require('../config/database');
 
 const register = async (req, res) => {
     try {
@@ -15,7 +15,7 @@ const register = async (req, res) => {
         }
         const passwordHash = await bcrypt.hash(password, 10);
         const insert = db.prepare(
-            'INSERT INTO users ( (name, email, password_hash, role) VALUES (?, ?, ?, ?)'
+            'INSERT INTO users (name, email, password_hash, role) VALUES (?, ?, ?, ?)'
         );
         const result = insert.run(name, email, passwordHash, role);
         res.status(201).json({message: 'User registered successfully', userId: result.lastInsertRowid });
@@ -24,4 +24,39 @@ const register = async (req, res) => {
         res.status(500).json({ error: 'Server error during registration' });
     }
 };
-module.exports = { register };
+const login = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        if (!email || !password) {
+            return res.status(400).json({ error: 'Email and password are required' });
+        }
+
+        const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email);
+        if (!user) {
+            return res.status(401).json({ error: 'Invalid email or password' });
+        }
+
+        const passwordMatch = await bcrypt.compare(password, user.password_hash);
+        if (!passwordMatch) {
+            return res.status(401).json({ error: 'Invalid email or password' });
+        }
+
+        const token = jwt.sign(
+            { id: user.id, role: user.role },
+            process.env.JWT_SECRET,
+            { expiresIn: '2h' }
+        );
+
+        res.status(200).json({
+            message: 'Login successful',
+            token,
+            user: { id: user.id, name: user.name, email: user.email, role: user.role }
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Server error during login' });
+    }
+};
+
+module.exports = { register, login };
