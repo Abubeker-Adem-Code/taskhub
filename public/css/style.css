@@ -441,3 +441,62 @@ button:focus-visible {
 .auth-toggle a:hover {
   text-decoration: underline;
 }
+/* ==========================================================================
+   Post Task form
+   ========================================================================== */
+
+.post-task-panel {
+  max-width: 500px;
+  margin-bottom: 2.5rem;
+  padding: 1.75rem;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.post-task-panel h3 {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  color: var(--navy);
+  margin-bottom: 1.25rem;
+}
+
+.post-task-panel .form-group {
+  margin-bottom: 1rem;
+}
+
+.post-task-panel label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.35rem;
+}
+
+.post-task-panel input,
+.post-task-panel textarea {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+}
+
+.post-task-panel textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.post-task-success {
+  color: #15803d;
+  font-size: 0.9rem;
+  margin-top: 0.75rem;
+}
+
+.post-task-error {
+  color: #b91c1c;
+  font-size: 0.9rem;
+  margin-top: 0.75rem;
+}

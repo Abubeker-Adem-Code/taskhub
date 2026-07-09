@@ -10,6 +10,7 @@
         loadTasks();
     } else if (hash === '#/dashboard') {
         document.getElementById('view-dashboard').classList.remove('current-hidden');
+        renderPostTaskForm();
         loadDashboard();
     } else if (hash === '#/auth') {
         document.getElementById('view-auth').classList.remove('current-hidden');
@@ -54,6 +55,10 @@ async function loadDashboard() {
 
     if (!token) {
         container.innerHTML = '<p>Please log in to view your dashboard.</p>';
+        return;
+    }
+       if (user.role === 'worker') {
+        container.innerHTML = '<p>Browse available tasks on the "Browse Tasks" page to find work. Application tracking is coming soon.</p>';
         return;
     }
 
@@ -194,6 +199,76 @@ function setupAuthForms() {
 
             toggleLink.click();
             document.getElementById('login-email').value = email;
+        } catch (error) {
+            errorEl.textContent = 'Could not reach the server';
+        }
+    });
+}
+function renderPostTaskForm() {
+    const container = document.getElementById('post-task-form-container');
+    if (!container) return;
+
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+    if (user.role !== 'client') {
+        container.innerHTML = '';
+        return;
+    }
+
+    container.innerHTML = `
+        <div class="post-task-panel">
+            <h3>Post a New Task</h3>
+            <form id="post-task-form">
+                <div class="form-group">
+                    <label for="new-task-title">Title</label>
+                    <input type="text" id="new-task-title" required>
+                </div>
+                <div class="form-group">
+                    <label for="new-task-description">Description</label>
+                    <textarea id="new-task-description" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="new-task-budget">Budget ($)</label>
+                    <input type="number" id="new-task-budget" min="1" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Post Task</button>
+                <p class="post-task-success" id="post-task-success"></p>
+                <p class="post-task-error" id="post-task-error"></p>
+            </form>
+        </div>
+    `;
+
+    document.getElementById('post-task-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const title = document.getElementById('new-task-title').value;
+        const description = document.getElementById('new-task-description').value;
+        const budget = parseFloat(document.getElementById('new-task-budget').value);
+        const successEl = document.getElementById('post-task-success');
+        const errorEl = document.getElementById('post-task-error');
+        successEl.textContent = '';
+        errorEl.textContent = '';
+
+        const token = localStorage.getItem('token');
+
+        try {
+            const response = await fetch('http://localhost:3000/api/tasks', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ title, description, budget })
+            });
+            const data = await response.json();
+
+            if (!response.ok) {
+                errorEl.textContent = data.error || 'Failed to post task';
+                return;
+            }
+
+            successEl.textContent = 'Task posted successfully!';
+            document.getElementById('post-task-form').reset();
+            loadDashboard();
         } catch (error) {
             errorEl.textContent = 'Could not reach the server';
         }
