@@ -88,5 +88,61 @@ async function handleTaskCreation(e) {
 }
 
 async function loadTaskDetails(taskId) {
-  alert('Loading details for Task ID: ' + taskId + '. Moving onto Step 5 details engine component next!');
+  const container = document.getElementById('task-detail-card');
+  if (!container) return;
+  container.innerHTML = '<p class="text-muted">Fetching project documents...</p>';
+  showScreen('task-detail-view');
+
+  try {
+    const task = await api.get(`/tasks/${taskId}`);
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+    let htmlContent = `
+      <div style="margin-bottom: 24px;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 12px;">
+          <h1 style="font-size: 28px; font-weight: 800; color: var(--text);">${task.title}</h1>
+          <span style="font-size: 20px; font-weight: 800; color: var(--primary);">$${task.budget}</span>
+        </div>
+        <div style="display: flex; gap: 15px; margin-bottom: 20px; font-size: 13px; color: var(--text-muted);">
+          <span>Project Reference ID: #<strong>${task.id}</strong></span>
+          <span>•</span>
+          <span style="text-transform: uppercase; font-weight: 700; color: ${task.status === 'completed' ? 'green' : 'orange'}">Status: ${task.status}</span>
+        </div>
+        <p style="white-space: pre-wrap; font-size: 15px; color: #334155; line-height: 1.6; background: var(--bg); padding: 20px; border-radius: var(--radius); border: 1px solid var(--border);">
+          ${task.description}
+        </p>
+      </div>
+    `;
+
+    if (user.role === 'worker' && task.status === 'pending') {
+      htmlContent += `
+        <div id="worker-proposal-box" style="border-top: 1px solid var(--border); padding-top: 24px; margin-top: 24px;">
+          <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 15px;">Submit an Official Freelance Bid Proposal</h3>
+          <form id="form-submit-proposal" onsubmit="handleProposalSubmission(event, ${task.id})">
+            <div class="form-group">
+              <label>Professional Cover Pitch Proposal Statement</label>
+              <textarea id="proposal-text" rows="4" placeholder="Detail your experience level and how you plan to tackle this project..." required style="resize:none; font-family:inherit;"></textarea>
+            </div>
+            <div class="form-group" style="max-width: 200px;">
+              <label>Bid Financial Amount ($ USD)</label>
+              <input type="number" id="proposal-bid" min="1" max="${task.budget}" value="${task.budget}" required>
+            </div>
+            <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Transmit Job Application Document</button>
+          </form>
+        </div>
+      `;
+    }
+
+    container.innerHTML = htmlContent;
+
+    setTimeout(() => {
+      if (typeof appendReviewFormIfCompleted === 'function') {
+        appendReviewFormIfCompleted(task, user, container);
+      }
+    }, 50);
+
+  } catch (err) {
+    container.innerHTML = `<p style="color:red;">Error loading project profile: ${err.message}</p>`;
+  }
 }
+
