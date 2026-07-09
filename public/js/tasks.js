@@ -33,7 +33,7 @@ async function loadDashboardContent() {
           ${task.description.length > 90 ? task.description.substring(0, 90) + '...' : task.description}
         </p>
         <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 12px;">
-          <span style="font-weight: 700; font-size: 15px; color: var(--text);">Est. Budget: $${task.budget}</span>
+          <span style="font-weight: 700; font-size: 15px; color: var(--text);">Est. Budget: $${task.budget}/hr</span>
           <span class="btn btn-outline btn-sm" onclick="loadTaskDetails(${task.id})">View Details</span>
         </div>
       </div>
@@ -101,7 +101,7 @@ async function loadTaskDetails(taskId) {
       <div style="margin-bottom: 24px;">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 12px;">
           <h1 style="font-size: 28px; font-weight: 800; color: var(--text);">${task.title}</h1>
-          <span style="font-size: 20px; font-weight: 800; color: var(--primary);">$${task.budget}</span>
+          <span style="font-size: 20px; font-weight: 800; color: var(--primary);">$${task.budget}/hr</span>
         </div>
         <div style="display: flex; gap: 15px; margin-bottom: 20px; font-size: 13px; color: var(--text-muted);">
           <span>Project Reference ID: #<strong>${task.id}</strong></span>

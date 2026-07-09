@@ -21,9 +21,9 @@ if (fenceTask) {
 const insertTask = db.prepare(
     'INSERT INTO tasks (client_id, title, description, budget, status) VALUES (?, ?, ?, ?, ?)'
 );
-insertTask.run(client.id, 'Entry-Level Frontend Developer', 'Build and maintain responsive UI components using modern JavaScript frameworks.', 25000, 'open');
-insertTask.run(client.id, 'Senior Backend Developer', 'Design and scale REST APIs, own database architecture and deployment pipeline.', 95000, 'open');
-insertTask.run(client.id, 'Database Administrator', 'Manage production databases, optimize queries, and ensure backup and recovery procedures.', 100000, 'open');
+insertTask.run(client.id, 'Entry-Level Frontend Developer', 'Build and maintain responsive UI components using modern JavaScript frameworks.', 25, 'open');
+insertTask.run(client.id, 'Senior Backend Developer', 'Design and scale REST APIs, own database architecture and deployment pipeline.', 95, 'open');
+insertTask.run(client.id, 'A Full Stack Developer', 'Manage production databases, optimize queries, and ensure backup and recovery procedures.', 72 , 'open');
 
 console.log('Fence task removed. 3 software engineering tasks added.');
 if (worker) {

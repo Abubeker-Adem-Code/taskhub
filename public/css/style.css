@@ -500,3 +500,54 @@ button:focus-visible {
   font-size: 0.9rem;
   margin-top: 0.75rem;
 }
+.apply-form-slot form {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+.apply-form-slot .form-group {
+  margin-bottom: 0.75rem;
+}
+.apply-form-slot label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+.apply-form-slot textarea,
+.apply-form-slot input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+}
+.apply-message {
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+}
+.application-status {
+  display: inline-block;
+  margin-top: 0.75rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.status-pending {
+  background-color: #fef3c7;
+  color: #b45309;
+}
+
+.status-accepted {
+  background-color: #f0fdf4;
+  color: #15803d;
+}
+
+.status-rejected {
+  background-color: #fef2f2;
+  color: #b91c1c;
+}

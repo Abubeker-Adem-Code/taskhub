@@ -53,8 +53,37 @@ async function loadDashboard() {
     const token = localStorage.getItem('token');
     const user = JSON.parse(localStorage.getItem('user') || '{}');
 
-    if (!token) {
-        container.innerHTML = '<p>Please log in to view your dashboard.</p>';
+    if (user.role === 'worker') {
+        container.innerHTML = '<p>Loading your applications...</p>';
+
+        try {
+            const response = await fetch('http://localhost:3000/api/applications/mine', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const applications = await response.json();
+
+            if (!applications || applications.length === 0) {
+                container.innerHTML = '<p>Browse available tasks on the "Browse Tasks" page to find work. You haven\'t applied to anything yet.</p>';
+                return;
+            }
+
+            container.innerHTML = '';
+            applications.forEach(app => {
+                const card = document.createElement('div');
+                card.className = 'task-card';
+                card.innerHTML = `
+                    <h3>${app.taskTitle}</h3>
+                    <span class="task-budget">$${app.taskBudget}</span>
+                    <p>Your bid: $${app.bid_amount}</p>
+                    <p>Proposal: ${app.proposal}</p>
+                    <span class="application-status status-${app.status}">${app.status}</span>
+                `;
+                container.appendChild(card);
+            });
+        } catch (error) {
+            console.error('Failed to load applications:', error);
+            container.innerHTML = '<p>Could not load your applications.</p>';
+        }
         return;
     }
        if (user.role === 'worker') {
@@ -80,7 +109,7 @@ async function loadDashboard() {
             card.className = 'task-card';
             card.innerHTML = `
                 <h3>${task.title}</h3>
-                <span class="task-budget">$${task.budget}</span>
+                <span class="task-budget">$${task.budget}/hr</span>
                 <p>Status: ${task.status}</p>
             `;
             container.appendChild(card);
@@ -105,16 +134,32 @@ async function loadTasks() {
             return;
         }
 
-        container.innerHTML = '';
+    container.innerHTML = '';
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+
         tasks.forEach(task => {
             const card = document.createElement('div');
             card.className = 'task-card';
+
+            let applySection = '';
+            if (user.role === 'worker') {
+                applySection = `
+                    <button class="btn btn-outline btn-sm apply-btn" data-task-id="${task.id}">Apply</button>
+                    <div class="apply-form-slot" id="apply-form-${task.id}"></div>
+                `;
+            }
+
             card.innerHTML = `
                 <h3>${task.title}</h3>
-                <span class="task-budget">$${task.budget}</span>
+                <span class="task-budget">$${task.budget}/hr</span>
                 <p>${task.description}</p>
+                ${applySection}
             `;
             container.appendChild(card);
+        });
+
+        document.querySelectorAll('.apply-btn').forEach(btn => {
+            btn.addEventListener('click', () => showApplyForm(btn.dataset.taskId));
         });
     } catch (error) {
         console.error('Failed to load tasks:', error);
@@ -271,6 +316,64 @@ function renderPostTaskForm() {
             loadDashboard();
         } catch (error) {
             errorEl.textContent = 'Could not reach the server';
+        }
+    });
+}
+function showApplyForm(taskId) {
+    const slot = document.getElementById(`apply-form-${taskId}`);
+    if (!slot) return;
+
+    if (slot.innerHTML !== '') {
+        slot.innerHTML = '';
+        return;
+    }
+
+    slot.innerHTML = `
+        <form class="apply-task-form" data-task-id="${taskId}">
+            <div class="form-group">
+                <label>Your Proposal</label>
+                <textarea class="apply-proposal" required></textarea>
+            </div>
+            <div class="form-group">
+                <label>Bid Amount ($)</label>
+                <input type="number" class="apply-bid" min="1" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-sm">Submit Application</button>
+            <p class="apply-message"></p>
+        </form>
+    `;
+
+    slot.querySelector('.apply-task-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const form = e.target;
+        const proposal = form.querySelector('.apply-proposal').value;
+        const bid_amount = parseFloat(form.querySelector('.apply-bid').value);
+        const messageEl = form.querySelector('.apply-message');
+        const token = localStorage.getItem('token');
+
+        try {
+            const response = await fetch(`http://localhost:3000/api/tasks/${taskId}/apply`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ proposal, bid_amount })
+            });
+            const data = await response.json();
+
+            if (!response.ok) {
+                messageEl.textContent = data.error || 'Failed to apply';
+                messageEl.style.color = '#b91c1c';
+                return;
+            }
+
+            messageEl.textContent = 'Application submitted!';
+            messageEl.style.color = '#15803d';
+            form.querySelector('button').disabled = true;
+        } catch (error) {
+            messageEl.textContent = 'Could not reach the server';
+            messageEl.style.color = '#b91c1c';
         }
     });
 }

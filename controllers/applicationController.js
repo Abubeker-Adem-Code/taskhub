@@ -66,5 +66,28 @@ const acceptApplication = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+const getMyApplications = async (req, res) => {
+    const worker_id = req.user.id;
 
-module.exports = { applyForTask, acceptApplication };
+    try {
+        const applications = db.prepare(`
+            SELECT 
+                applications.id,
+                applications.proposal,
+                applications.bid_amount,
+                applications.status,
+                applications.created_at,
+                tasks.title AS taskTitle,
+                tasks.budget AS taskBudget
+            FROM applications
+            JOIN tasks ON applications.task_id = tasks.id
+            WHERE applications.worker_id = ?
+            ORDER BY applications.created_at DESC
+        `).all(worker_id);
+
+        res.status(200).json(applications);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+module.exports = { applyForTask, acceptApplication, getMyApplications };
