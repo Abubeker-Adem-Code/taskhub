@@ -1,9 +1,11 @@
+import { apiWrapper } from './api.js';
+
 export async function initializeReviewsFeed() {
     const container = document.getElementById('reviews-feed-container');
     if (!container) return;
 
     try {
-        const response = await apiWrapper.get('/api/reviews');
+        const response = await apiWrapper.get('/reviews');
         
         if (!response || response.length === 0) {
             container.innerHTML = `<div class="feed-empty">No reviews published yet. Be the first!</div>`;
@@ -16,6 +18,7 @@ export async function initializeReviewsFeed() {
         response.forEach(review => {
             const card = document.createElement('div');
             card.className = 'review-card';
+            
             card.innerHTML = `
                 <div class="review-meta">
                     <span class="review-author">${escapeHTML(review.authorName)}</span>
@@ -54,3 +57,4 @@ document.addEventListener('DOMContentLoaded', () => {
         initializeReviewsFeed();
     }
 });
+

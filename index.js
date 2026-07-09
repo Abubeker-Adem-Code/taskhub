@@ -1,7 +1,9 @@
+const cors = require('cors');
 const morgan = require('morgan');
 require('dotenv').config();
 const express = require('express');
 const app = express();
+app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
 const authRoutes = require('./routes/authRoutes');
@@ -16,6 +18,8 @@ const taskRoutes = require('./routes/taskRoutes');
 app.use('/api/tasks', taskRoutes);
 const applicationRoutes = require('./routes/applicationRoutes');
 app.use('/api', applicationRoutes);
+const reviewRoutes = require('./routes/reviewRoutes');
+app.use('/api/reviews', reviewRoutes);
 const fs = require('fs');
 const path = require('path');
 

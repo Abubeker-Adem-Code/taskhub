@@ -1,4 +1,4 @@
-const API_URL = window.location.origin + '/api';
+const API_URL = 'http://localhost:3000/api';
 
 const api = {
   async request(endpoint, options = {}) {
@@ -38,3 +38,4 @@ const api = {
     return this.request(endpoint, { ...options, method: 'PATCH', body: JSON.stringify(body) });
   }
 };
+export { api as apiWrapper };

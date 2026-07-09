@@ -3,126 +3,72 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TaskMatch Freelance Hub</title>
+    <title>Freelance Marketplace Dashboard</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
-    <header class="navbar">
-      <div class="container nav-flex">
-        <div class="brand-logo" onclick="showScreen('landing-view')">
-          TaskMatch
-        </div>
-        <nav id="nav-actions" class="nav-links">
-          <button class="btn btn-outline" onclick="showScreen('login-view')">
-            Login
-          </button>
-          <button class="btn btn-primary" onclick="showScreen('register-view')">
-            Register
-          </button>
-        </nav>
-      </div>
+    <header class="app-header">
+      <div class="logo">FlexMarket</div>
+      <nav class="nav-links">
+        <a href="#/" class="nav-item">Home</a>
+        <a href="#/tasks" class="nav-item">Browse Tasks</a>
+        <a href="#/dashboard" class="nav-item dashboard-link">My Dashboard</a>
+        <button id="authBtn" class="btn btn-secondary">Loading...</button>
+      </nav>
     </header>
 
-    <main class="container content-main">
-      <div id="landing-view" class="app-screen">
-        <div class="hero-card">
-          <h1>Find the Perfect Match for Any Freelance Task</h1>
+    <main id="app-root">
+      <section id="view-home" class="app-view">
+        <header class="hero-section">
+          <h1>Find Top Freelance Talent Intelligently</h1>
           <p>
-            Post jobs as a client or submit proposals as a freelance worker
-            instantly.
+            Post jobs, track milestones, and secure payments natively on our
+            modern platform.
           </p>
           <div class="hero-actions">
-            <button
-              class="btn btn-primary btn-lg"
-              onclick="showScreen('register-view')"
-            >
-              Get Started Now
-            </button>
+            <a href="#/tasks" class="btn btn-primary">Explore Marketplace</a>
           </div>
-        </div>
-      </div>
+        </header>
 
-      <div id="login-view" class="app-screen dynamic-hidden">
-        <div class="form-card">
-          <h2>Welcome Back</h2>
-          <form id="form-login" onsubmit="event.preventDefault()">
-            <div class="form-group">
-              <label>Email Address</label>
-              <input type="email" placeholder="you@example.com" required />
-            </div>
-            <div class="form-group">
-              <label>Password</label>
-              <input type="password" placeholder="••••••••" required />
-            </div>
-            <button type="submit" class="btn btn-primary btn-block">
-              Sign In
-            </button>
-          </form>
-          <p class="form-footer">
-            New here?
-            <span onclick="showScreen('register-view')">Create an account</span>
-          </p>
-        </div>
-      </div>
+        <section class="reviews-panel-section">
+          <div class="panel-header">
+            <h2>Platform Reviews &amp; Ratings</h2>
+            <p class="panel-subtitle">
+              Latest feedback from our global community of freelancers and
+              clients
+            </p>
+          </div>
 
-      <div id="register-view" class="app-screen dynamic-hidden">
-        <div class="form-card">
-          <h2>Create Workspace Profile</h2>
-          <form id="form-register" onsubmit="event.preventDefault()">
-            <div class="form-group">
-              <label>Full Name</label>
-              <input type="text" placeholder="John Doe" required />
-            </div>
-            <div class="form-group">
-              <label>Email Address</label>
-              <input type="email" placeholder="name@domain.com" required />
-            </div>
-            <div class="form-group">
-              <label>Password</label>
-              <input type="password" placeholder="Min. 6 characters" required />
-            </div>
-            <div class="form-group">
-              <label>Account Role</label>
-              <select required>
-                <option value="client">Client (Post Jobs)</option>
-                <option value="worker">Worker (Apply to Tasks)</option>
-              </select>
-            </div>
-            <button type="submit" class="btn btn-primary btn-block">
-              Register Account
-            </button>
-          </form>
-          <p class="form-footer">
-            Already registered?
-            <span onclick="showScreen('login-view')">Login</span>
-          </p>
-        </div>
-      </div>
+          <div
+            id="reviews-feed-container"
+            class="reviews-grid"
+            data-loading="true"
+          >
+            <div class="review-placeholder">Loading latest reviews...</div>
+          </div>
+        </section>
+      </section>
 
-      <div id="dashboard-view" class="app-screen dynamic-hidden">
-        <div class="dashboard-header">
-          <h2 id="dash-title">Workspace Dashboard</h2>
-          <div id="dash-actions"></div>
-        </div>
-        <div id="dash-content-list" class="grid-container"></div>
-      </div>
+      <section id="view-tasks" class="app-view dynamic-view current-hidden">
+        <h2>Available Marketplace Tasks</h2>
+        <div id="tasks-list-container"></div>
+      </section>
 
-      <div id="task-detail-view" class="app-screen dynamic-hidden">
-        <button
-          class="btn btn-outline btn-sm"
-          onclick="showScreen('dashboard-view')"
-        >
-          ← Back to Dashboard
-        </button>
-        <div id="task-detail-card" class="detail-card"></div>
-      </div>
+      <section id="view-dashboard" class="app-view dynamic-view current-hidden">
+        <h2>User Activity Console</h2>
+        <div id="dashboard-metrics"></div>
+      </section>
     </main>
 
-    <script src="js/api.js"></script>
-    <script src="js/app.js"></script>
-    <script src="js/auth.js"></script>
-    <script src="js/tasks.js"></script>
-    <script src="js/applications.js"></script>
-    <script src="js/reviews.js"></script>
+    <footer class="app-footer">
+      <p>&copy; 2026 FlexMarket Inc. All rights reserved.</p>
+    </footer>
+
+    <script type="module" src="js/app.js"></script>
+    <script type="module" src="js/reviews.js"></script>
   </body>
 </html>
