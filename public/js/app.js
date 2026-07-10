@@ -86,6 +86,50 @@ async function loadDashboard() {
         }
         return;
     }
+    if (user.role === 'client') {
+        container.innerHTML = '<p>Loading applications for your tasks...</p>';
+
+        try {
+            const response = await fetch('http://localhost:3000/api/applications/for-my-tasks', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const applications = await response.json();
+
+            if (!applications || applications.length === 0) {
+                container.innerHTML = '<p>No one has applied to your tasks yet.</p>';
+                return;
+            }
+
+            container.innerHTML = '';
+            applications.forEach(app => {
+                const card = document.createElement('div');
+                card.className = 'task-card';
+
+                let actionButton = '';
+                if (app.status === 'pending') {
+                    actionButton = `<button class="btn btn-primary btn-sm accept-btn" data-app-id="${app.id}">Accept</button>`;
+                }
+
+                card.innerHTML = `
+                    <h3>${app.taskTitle}</h3>
+                    <p>Applicant: <strong>${app.workerName}</strong></p>
+                    <p>Bid: $${app.bid_amount}</p>
+                    <p>Proposal: ${app.proposal}</p>
+                    <span class="application-status status-${app.status}">${app.status}</span>
+                    ${actionButton}
+                `;
+                container.appendChild(card);
+            });
+
+            document.querySelectorAll('.accept-btn').forEach(btn => {
+                btn.addEventListener('click', () => acceptApplication(btn.dataset.appId));
+            });
+        } catch (error) {
+            console.error('Failed to load applications:', error);
+            container.innerHTML = '<p>Could not load applications.</p>';
+        }
+        return;
+    }
        if (user.role === 'worker') {
         container.innerHTML = '<p>Browse available tasks on the "Browse Tasks" page to find work. Application tracking is coming soon.</p>';
         return;
@@ -376,4 +420,24 @@ function showApplyForm(taskId) {
             messageEl.style.color = '#b91c1c';
         }
     });
+}
+async function acceptApplication(appId) {
+    const token = localStorage.getItem('token');
+
+    try {
+        const response = await fetch(`http://localhost:3000/api/applications/${appId}/accept`, {
+            method: 'PATCH',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await response.json();
+
+        if (!response.ok) {
+            alert(data.error || 'Failed to accept application');
+            return;
+        }
+
+        loadDashboard();
+    } catch (error) {
+        alert('Could not reach the server');
+    }
 }
