@@ -17,7 +17,7 @@
     } else {
         document.getElementById('view-home').classList.remove('current-hidden');
     }
-}
+} 
 
 function updateAuthButton() {
     const authBtn = document.getElementById('authBtn');
@@ -57,7 +57,7 @@ async function loadDashboard() {
         container.innerHTML = '<p>Loading your applications...</p>';
 
         try {
-            const response = await fetch('http://localhost:3000/api/applications/mine', {
+            const response = await fetch('/api/applications/mine', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const applications = await response.json();
@@ -90,7 +90,7 @@ async function loadDashboard() {
         container.innerHTML = '<p>Loading applications for your tasks...</p>';
 
         try {
-            const response = await fetch('http://localhost:3000/api/applications/for-my-tasks', {
+            const response = await fetch('/api/applications/for-my-tasks', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const applications = await response.json();
@@ -138,7 +138,7 @@ async function loadDashboard() {
     container.innerHTML = '<p>Loading your tasks...</p>';
 
     try {
-        const response = await fetch('http://localhost:3000/api/tasks');
+        const response = await fetch('/api/tasks');
         const allTasks = await response.json();
         const myTasks = allTasks.filter(task => task.client_id === user.id);
 
@@ -170,7 +170,7 @@ async function loadTasks() {
     container.innerHTML = '<p>Loading tasks...</p>';
 
     try {
-        const response = await fetch('http://localhost:3000/api/tasks');
+        const response = await fetch('/api/tasks');
         const tasks = await response.json();
 
         if (!tasks || tasks.length === 0) {
@@ -243,7 +243,7 @@ function setupAuthForms() {
         errorEl.textContent = '';
 
         try {
-            const response = await fetch('http://localhost:3000/api/auth/login', {
+            const response = await fetch('/api/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })
@@ -274,7 +274,7 @@ function setupAuthForms() {
         errorEl.textContent = '';
 
         try {
-            const response = await fetch('http://localhost:3000/api/auth/register', {
+            const response = await fetch('/api/auth/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, email, password, role })
@@ -340,7 +340,7 @@ function renderPostTaskForm() {
         const token = localStorage.getItem('token');
 
         try {
-            const response = await fetch('http://localhost:3000/api/tasks', {
+            const response = await fetch('/api/tasks', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -396,7 +396,7 @@ function showApplyForm(taskId) {
         const token = localStorage.getItem('token');
 
         try {
-            const response = await fetch(`http://localhost:3000/api/tasks/${taskId}/apply`, {
+            const response = await fetch(`/api/tasks/${taskId}/apply`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -425,7 +425,7 @@ async function acceptApplication(appId) {
     const token = localStorage.getItem('token');
 
     try {
-        const response = await fetch(`http://localhost:3000/api/applications/${appId}/accept`, {
+        const response = await fetch(`/api/applications/${appId}/accept`, {
             method: 'PATCH',
             headers: { 'Authorization': `Bearer ${token}` }
         });
