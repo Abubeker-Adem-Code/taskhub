@@ -23,6 +23,11 @@ app.use('/api/reviews', reviewRoutes);
 const fs = require('fs');
 const path = require('path');
 
+app.use(express.static(path.join(__dirname, 'public')));
+app.get(/^(?!\/api).*/, (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 global.logAction = (action, details) => {
   const msg = `[${new Date().toISOString()}] ACTION: ${action} | DETAILS: ${JSON.stringify(details)}\n`;
   fs.appendFileSync(path.join(__dirname, 'app.log'), msg);
